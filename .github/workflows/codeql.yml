@@ -1,0 +1,60 @@
+name: "CodeQL Advanced"
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+  schedule:
+    - cron: '30 1 * * 0'
+
+
+jobs:
+  analyze:
+
+    name: Analyze C#
+    runs-on: windows-latest
+
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+
+    # 下載程式碼
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+
+    # 初始化 CodeQL
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: csharp
+
+
+    # 安裝 MSBuild
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+
+    # 還原 NuGet Package
+    - name: Restore NuGet packages
+      run: |
+        nuget restore WebGoat.NET.sln
+
+
+    # Build .NET Framework Solution
+    - name: Build solution
+      run: |
+        msbuild WebGoat.NET.sln /p:Configuration=Release
+
+
+    # 執行 CodeQL 分析並上傳 SARIF
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3

@@ -5,7 +5,7 @@ using System.IO;
 
 namespace OWASP.WebGoat.NET.App_Code
 {
-    public class ConfigFile
+    public class ConfigFile 
     {
         private string _filePath;
         
